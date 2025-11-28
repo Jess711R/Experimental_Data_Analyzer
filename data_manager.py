@@ -5,12 +5,22 @@ class DataManager:
     Handles filtering, statistics, and data manipulation.
     """
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame = None):
         """
         Stores the DataFrame for further operations.
+        df is optional at initialization since the user loads data later.
+        """
+        if df is not None and not isinstance(df, pd.DataFrame):
+            raise TypeError("DataManager expects a pandas DataFrame or None.")
+        
+        self.df = df
+
+    def set_dataframe(self, df: pd.DataFrame):
+        """
+        Updates the stored DataFrame after data is loaded from the GUI.
         """
         if not isinstance(df, pd.DataFrame):
-            raise TypeError("DataManager expects a pandas DataFrame.")
+            raise TypeError("set_dataframe expects a pandas DataFrame.")
         self.df = df
 
     def filter(self, **conditions):
@@ -18,6 +28,9 @@ class DataManager:
         Filters data based on user-specified column=value pairs.
         Example: filter(treatment="DrugA", dose=10)
         """
+        if self.df is None:
+            raise ValueError("No dataset loaded yet.")
+
         filtered = self.df.copy()
 
         for col, val in conditions.items():
@@ -32,6 +45,9 @@ class DataManager:
         Computes basic statistics for a given numeric column.
         Returns a dictionary with mean, std, min, max.
         """
+        if self.df is None:
+            raise ValueError("No dataset loaded yet.")
+
         if column not in self.df.columns:
             raise KeyError(f"Column '{column}' not found in dataset.")
 
@@ -51,6 +67,10 @@ class DataManager:
         """
         Returns unique values for a column (useful for dropdown menus).
         """
+        if self.df is None:
+            raise ValueError("No dataset loaded yet.")
+
         if column not in self.df.columns:
             raise KeyError(f"Column '{column}' not found.")
+        
         return sorted(self.df[column].dropna().unique())
