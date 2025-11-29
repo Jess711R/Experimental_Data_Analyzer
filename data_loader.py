@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 class DataLoader:
     """
@@ -9,30 +10,36 @@ class DataLoader:
         """
         required_columns: list of column names the dataset must include.
         """
-        self.required_columns = required_columns or ["sample_id"]
+        self.required_columns = required_columns or []
 
-    def load(self, filepath):
+    def load(self, filepath: str) -> pd.DataFrame:
         """
-        Loads a file based on its extension.
+        Loads a CSV or Excel file into a pandas DataFrame.
+        Includes robust handling for Windows encodings.
         """
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"File not found: {filepath}")
+
+        ext = filepath.lower().split(".")[-1]
+
         try:
-            if filepath.endswith(".csv"):
-                df = pd.read_csv(filepath)
-            elif filepath.endswith(".xlsx") or filepath.endswith(".xls"):
-                df = pd.read_excel(filepath)
-            else:
-                raise ValueError("Unsupported file type. Please upload CSV or Excel.")
+            if ext == "csv":
+                # Try UTF-8 first, fallback to latin1 (Windows Excel encoding)
+                try:
+                    df = pd.read_csv(filepath, encoding="utf-8")
+                except UnicodeDecodeError:
+                    df = pd.read_csv(filepath, encoding="latin1")
 
-            self._validate_columns(df)
+            elif ext in ["xlsx", "xls"]:
+                df = pd.read_excel(filepath)
+
+            else:
+                raise ValueError("Unsupported file type. Use CSV or Excel files.")
+
+            if df.empty:
+                raise ValueError("Loaded file is empty.")
+
             return df
 
         except Exception as e:
             raise RuntimeError(f"Error loading file: {e}")
-
-    def _validate_columns(self, df):
-        """
-        Checks whether the required columns are present.
-        """
-        missing = [col for col in self.required_columns if col not in df.columns]
-        if missing:
-            raise ValueError(f"Missing required columns: {missing}")
