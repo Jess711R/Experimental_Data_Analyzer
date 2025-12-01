@@ -3,7 +3,6 @@ main.py
 Entry point for the Experimental Data Analyzer project.
 Launches the Tkinter GUI and initializes all core modules.
 
-Author: Your Name
 """
 
 from gui import DataAnalyzerGUI
