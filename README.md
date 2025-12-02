@@ -96,7 +96,7 @@ Experimental_Data_Analyzer/
 │
 ├── sample_data/
 │   ├── MCF7_MTT_small.csv       # Demo dataset (MTT assay)
-│   └── MCF7_MTT_small2.csv      # Optional second dataset
+│   └── MCF7_MTT_large.csv      # Optional second dataset
 │
 └── tests/                       # Unit tests (10 total)
     ├── test_loader_01_load_csv.py
