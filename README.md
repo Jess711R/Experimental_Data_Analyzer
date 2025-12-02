@@ -38,6 +38,27 @@ The project uses a multi-module structure, object-oriented design, robust error 
 * Automatically updates the dataset stored in memory
 
 
+### ⚠️ **Note on Filtering**
+
+The current version of the filtering feature supports **string-based filtering only**, meaning the program can filter rows using **categorical/text columns** such as:
+
+* `Treatment`
+* `SampleID`
+
+However, **numeric columns** — such as:
+
+* `Dose_µM`
+* `Time_h`
+* `Viability_percent`
+* `Replicate`
+
+cannot be filtered using the GUI.
+This is because user-entered values in the filter box are treated as text, and numeric comparisons (for example `"10"` vs `10`) do not match. As a result, filtering numeric columns will return zero results even if matching numeric values exist in the dataset.
+
+This limitation applies only to filtering and **does not affect any other features**, including plotting, statistics, or PCA.
+
+
+
 ### **📊 Visualizations**
 
 The tool supports five major plot types:
